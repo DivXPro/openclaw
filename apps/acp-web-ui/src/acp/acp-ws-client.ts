@@ -2,7 +2,6 @@ import type {
   JsonRpcRequest,
   JsonRpcResponse,
   JsonRpcNotification,
-  JsonRpcError,
   InitializeResult,
   InitializeParams,
   NewSessionParams,

@@ -1,8 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { WebSocketServer, WebSocket as WsWebSocket } from "ws";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { WebSocketServer } from "ws";
 import { AcpWsClient } from "../../src/acp/acp-ws-client";
 import type {
-  InitializeResult,
   SessionUpdate,
   JsonRpcRequest,
 } from "../../src/acp/acp-types";

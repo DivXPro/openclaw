@@ -330,3 +330,66 @@ body {
   border-color: var(--color-accent);
   color: white;
 }
+
+/* Permission dialog */
+.permission-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.permission-dialog {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 20px;
+  min-width: 400px;
+  max-width: 600px;
+}
+
+.permission-dialog h3 {
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.permission-args {
+  background: var(--color-bg);
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 8px 0;
+  font-family: var(--font-mono);
+}
+
+.permission-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.permission-allow {
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.permission-deny {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+}

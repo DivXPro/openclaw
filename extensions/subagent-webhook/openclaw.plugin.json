@@ -1,0 +1,54 @@
+{
+  "id": "subagent-webhook",
+  "enabledByDefault": true,
+  "name": "Subagent Outbound Webhook",
+  "description": "Push subagent lifecycle events to external HTTP endpoints.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "$defs": {
+      "secretRef": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "source": { "type": "string", "enum": ["env", "file", "exec"] },
+          "provider": { "type": "string" },
+          "id": { "type": "string" }
+        },
+        "required": ["source", "provider", "id"]
+      },
+      "secretInput": {
+        "anyOf": [{ "type": "string", "minLength": 1 }, { "$ref": "#/$defs/secretRef" }]
+      },
+      "target": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "enabled": { "type": "boolean" },
+          "url": { "type": "string", "format": "uri" },
+          "secret": { "$ref": "#/$defs/secretInput" },
+          "events": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["spawned", "ended"] },
+            "default": ["spawned", "ended"]
+          }
+        },
+        "required": ["url"]
+      }
+    },
+    "properties": {
+      "targets": {
+        "type": "object",
+        "additionalProperties": { "$ref": "#/$defs/target" }
+      },
+      "queryEndpoint": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "enabled": { "type": "boolean", "default": true },
+          "auth": { "type": "string", "enum": ["plugin", "gateway"], "default": "plugin" }
+        }
+      }
+    }
+  }
+}

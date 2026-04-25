@@ -6,6 +6,7 @@ import {
 } from "./src/config.js";
 import { pushToAllTargets, type SubagentWebhookPayload } from "./src/push.js";
 import { createSubagentQueryHandler, type CachedRun } from "./src/query-handler.js";
+import { extractDeliverablesFromMessages, type Deliverable } from "./src/uri-embed.js";
 
 function extractTextFromMessageContent(content: unknown): string | undefined {
   if (typeof content === "string") {
@@ -109,6 +110,23 @@ export default definePluginEntry({
         cached.error = event.error ?? undefined;
         cached.endedAt = Date.now();
       }
+
+      let deliverables: Deliverable[] = [];
+      if (Object.keys(pluginConfig.uriSchemes).length > 0) {
+        try {
+          const result = await api.runtime.subagent?.getSessionMessages?.({
+            sessionKey: event.childSessionKey,
+            limit: 100,
+          });
+          deliverables = extractDeliverablesFromMessages(
+            result?.messages ?? [],
+            pluginConfig.uriSchemes,
+          );
+        } catch {
+          // Best-effort: ignore errors
+        }
+      }
+
       const payload: SubagentWebhookPayload = {
         type: "subagent_ended",
         timestamp: Date.now(),
@@ -118,6 +136,7 @@ export default definePluginEntry({
         reason: event.reason,
         outcome: event.outcome,
         error: event.error,
+        deliverables: deliverables.length > 0 ? deliverables : undefined,
       };
       await pushToAllTargets(targets, payload, {
         logger: api.logger,

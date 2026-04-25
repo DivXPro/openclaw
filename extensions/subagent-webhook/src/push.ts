@@ -21,6 +21,7 @@ export type SubagentWebhookPayload =
       reason: string;
       outcome?: "ok" | "error" | "timeout" | "killed" | "reset" | "deleted";
       error?: string;
+      deliverables?: unknown[];
     };
 
 function signPayload(payload: string, secret: string): string {

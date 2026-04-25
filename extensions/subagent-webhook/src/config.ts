@@ -27,6 +27,27 @@ const targetSchema = z
   })
   .strict();
 
+const fieldMappingSchema = z
+  .object({
+    path: z.string().trim().min(1),
+    format: z.string().optional(),
+  })
+  .strict();
+
+const resourceConfigSchema = z
+  .object({
+    webUrlTemplate: z.string().trim().min(1),
+    apiUrlTemplate: z.string().trim().min(1).optional(),
+    fields: z.record(z.string().trim().min(1), fieldMappingSchema).optional().default({}),
+  })
+  .strict();
+
+const uriSchemeConfigSchema = z
+  .object({
+    resources: z.record(z.string().trim().min(1), resourceConfigSchema),
+  })
+  .strict();
+
 const pluginConfigSchema = z
   .object({
     targets: z.record(z.string().trim().min(1), targetSchema).default({}),
@@ -37,11 +58,15 @@ const pluginConfigSchema = z
       })
       .optional()
       .default({}),
+    uriSchemes: z.record(z.string().trim().min(1), uriSchemeConfigSchema).optional().default({}),
   })
   .strict();
 
 export type WebhookTargetConfig = z.infer<typeof targetSchema>;
 export type SubagentWebhookPluginConfig = z.infer<typeof pluginConfigSchema>;
+export type UriSchemeConfig = z.infer<typeof uriSchemeConfigSchema>;
+export type ResourceConfig = z.infer<typeof resourceConfigSchema>;
+export type FieldMapping = z.infer<typeof fieldMappingSchema>;
 
 export type ResolvedWebhookTarget = {
   targetId: string;

@@ -184,6 +184,12 @@ export interface RequestPermissionParams {
   approved: boolean;
 }
 
+// Set mode
+export interface SetModeParams {
+  sessionId: string;
+  mode: string;
+}
+
 // Cancel
 export interface CancelParams {
   sessionId: string;

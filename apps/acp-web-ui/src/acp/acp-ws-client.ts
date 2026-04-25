@@ -12,6 +12,7 @@ import type {
   PromptParams,
   PromptMessage,
   SessionUpdate,
+  SetModeParams,
   RequestPermissionParams,
   CancelParams,
 } from "./acp-types";
@@ -86,6 +87,11 @@ export class AcpWsClient {
 
   listSessions(): Promise<ListSessionsResult> {
     return this.sendRequest<ListSessionsResult>("listSessions");
+  }
+
+  setMode(sessionId: string, mode: string): Promise<void> {
+    const params: SetModeParams = { sessionId, mode };
+    return this.sendRequest<void>("session/set_mode", params);
   }
 
   prompt(sessionId: string, messages: PromptMessage[]): Promise<void> {

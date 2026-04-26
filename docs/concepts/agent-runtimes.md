@@ -14,7 +14,7 @@ the finished turn to OpenClaw.
 Runtimes are easy to confuse with providers because both show up near model
 configuration. They are different layers:
 
-| Layer         | Examples                              | What It Means                                                       |
+| Layer         | Examples                              | What it means                                                       |
 | ------------- | ------------------------------------- | ------------------------------------------------------------------- |
 | Provider      | `openai`, `anthropic`, `openai-codex` | How OpenClaw authenticates, discovers models, and names model refs. |
 | Model         | `gpt-5.5`, `claude-opus-4-6`          | The model selected for the agent turn.                              |
@@ -45,6 +45,20 @@ The common Codex setup uses the `openai` provider with the `codex` runtime:
 That means OpenClaw selects an OpenAI model ref, then asks the Codex app-server
 runtime to run the embedded agent turn. It does not mean the channel, model
 provider catalog, or OpenClaw session store becomes Codex.
+
+When the bundled `codex` plugin is enabled, natural-language Codex control
+should use the native `/codex` command surface (`/codex bind`, `/codex threads`,
+`/codex resume`, `/codex steer`, `/codex stop`) instead of ACP. Use ACP for
+Codex only when the user explicitly asks for ACP/acpx or is testing the ACP
+adapter path. Claude Code, Gemini CLI, OpenCode, Cursor, and similar external
+harnesses still use ACP.
+
+| You mean...                             | Use...                                       |
+| --------------------------------------- | -------------------------------------------- |
+| Codex app-server chat/thread control    | `/codex ...` from the bundled `codex` plugin |
+| Codex app-server embedded agent runtime | `embeddedHarness.runtime: "codex"`           |
+| OpenAI Codex OAuth on the PI runner     | `openai-codex/*` model refs                  |
+| Claude Code or other external harness   | ACP/acpx                                     |
 
 For the OpenAI-family prefix split, see [OpenAI](/providers/openai) and
 [Model providers](/concepts/model-providers). For the Codex runtime support
@@ -97,7 +111,7 @@ routed back to PI just because defaults used `fallback: "pi"`.
 When a runtime is not PI, it should document what OpenClaw surfaces it supports.
 Use this shape for runtime docs:
 
-| Question                               | Why It Matters                                                                                    |
+| Question                               | Why it matters                                                                                    |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | Who owns the model loop?               | Determines where retries, tool continuation, and final answer decisions happen.                   |
 | Who owns canonical thread history?     | Determines whether OpenClaw can edit history or only mirror it.                                   |

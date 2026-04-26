@@ -60,7 +60,7 @@ transcript path on disk when you need the raw full transcript.
 - `--model` and `--thinking` override defaults for that specific run.
 - Use `info`/`log` to inspect details and output after completion.
 - `/subagents spawn` is one-shot mode (`mode: "run"`). For persistent thread-bound sessions, use `sessions_spawn` with `thread: true` and `mode: "session"`.
-- For ACP harness sessions (Codex, Claude Code, Gemini CLI), use `sessions_spawn` with `runtime: "acp"` and see [ACP Agents](/tools/acp-agents), especially the [ACP delivery model](/tools/acp-agents#delivery-model) when debugging completions or agent-to-agent loops.
+- For ACP harness sessions (Claude Code, Gemini CLI, OpenCode, or explicit Codex ACP/acpx), use `sessions_spawn` with `runtime: "acp"` when the tool advertises that runtime, and see [ACP Agents](/tools/acp-agents), especially the [ACP delivery model](/tools/acp-agents#delivery-model) when debugging completions or agent-to-agent loops. When the `codex` plugin is enabled, Codex chat/thread control should prefer `/codex ...` over ACP unless the user explicitly asks for ACP/acpx. OpenClaw hides `runtime: "acp"` until ACP is enabled, the requester is not sandboxed, and a backend plugin such as `acpx` is loaded. `runtime: "acp"` expects an external ACP harness id, or an `agents.list[]` entry with `runtime.type="acp"`; use the default sub-agent runtime for normal OpenClaw config agents from `agents_list`.
 
 Primary goals:
 
@@ -103,6 +103,7 @@ Tool params:
 - `task` (required)
 - `label?` (optional)
 - `agentId?` (optional; spawn under another agent id if allowed)
+- `runtime?` (`subagent|acp`, default `subagent`; `acp` is only for external ACP harnesses such as `claude`, `droid`, `gemini`, `opencode`, or explicitly requested Codex ACP/acpx, or for `agents.list[]` entries whose `runtime.type` is `acp`)
 - `model?` (optional; overrides the sub-agent model; invalid values are skipped and the sub-agent runs on the default model with a warning in the tool result)
 - `thinking?` (optional; overrides thinking level for the sub-agent run)
 - `runTimeoutSeconds?` (defaults to `agents.defaults.subagents.runTimeoutSeconds` when set, otherwise `0`; when set, the sub-agent run is aborted after N seconds)
@@ -158,7 +159,7 @@ Allowlist:
 
 Discovery:
 
-- Use `agents_list` to see which agent ids are currently allowed for `sessions_spawn`.
+- Use `agents_list` to see which agent ids are currently allowed for `sessions_spawn`. The response includes each listed agent's effective model and embedded runtime metadata so callers can distinguish PI, Codex app-server, and other configured native runtimes.
 
 Auto-archive:
 
@@ -305,7 +306,11 @@ Announce payloads include a stats line at the end (even when wrapped):
 
 ## Tool Policy (sub-agent tools)
 
-By default, sub-agents get **all tools except session tools** and system tools:
+Sub-agents use the same profile and tool-policy pipeline as the parent or target
+agent first. After that, OpenClaw applies the sub-agent restriction layer.
+
+With no restrictive `tools.profile`, sub-agents get **all tools except session
+tools** and system tools:
 
 - `sessions_list`
 - `sessions_history`
@@ -341,6 +346,24 @@ Override via config:
 }
 ```
 
+`tools.subagents.tools.allow` is a final allow-only filter. It can narrow the
+already-resolved tool set, but it cannot add back a tool removed by
+`tools.profile`. For example, `tools.profile: "coding"` includes
+`web_search`/`web_fetch`, but not the `browser` tool. To let coding-profile
+sub-agents use browser automation, add browser at the profile stage:
+
+```json5
+{
+  tools: {
+    profile: "coding",
+    alsoAllow: ["browser"],
+  },
+}
+```
+
+Use per-agent `agents.list[].tools.alsoAllow: ["browser"]` when only one agent
+should get browser automation.
+
 ## Concurrency
 
 Sub-agents use a dedicated in-process queue lane:
@@ -359,6 +382,14 @@ After a gateway restart, stale unended restored runs are pruned unless their
 child session is marked `abortedLastRun: true`. Those restart-aborted child
 sessions remain recoverable through the sub-agent orphan recovery flow, which
 sends a synthetic resume message before clearing the aborted marker.
+
+If a sub-agent spawn fails with Gateway `PAIRING_REQUIRED` / `scope-upgrade`,
+check the RPC caller before editing pairing state. Internal `sessions_spawn`
+coordination should connect as `client.id: "gateway-client"` with
+`client.mode: "backend"` over direct loopback shared-token/password auth; that
+path does not depend on the CLI's paired-device scope baseline. Remote callers,
+explicit `deviceIdentity`, explicit device-token paths, and browser/node clients
+still need normal device approval for scope upgrades.
 
 ## Stopping
 

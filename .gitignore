@@ -1,140 +1,158 @@
-
+node_modules
+**/node_modules/
+.env
+docker-compose.override.yml
+docker-compose.extra.yml
+dist
+dist-runtime/
+pnpm-lock.yaml
+bun.lock
+bun.lockb
+coverage
 __openclaw_vitest__/
 __pycache__/
-!.agent/workflows/
-.agent/
-.agent/*.json
-.ant-colony/
-.artifacts/
-.artifacts/qa-e2e/
-.bundle.hash
-.claude/
-.dev-state
-.DS_Store
-.env
-.gitignore
-.idea
-.local/
-.pnpm-store
-.serena/
-.tgz
-.tmp/
-.tsbuildinfo
-.worktrees/
-*.bun-build
 *.pyc
-**/.classpath
+.tsbuildinfo
+.pnpm-store
+.worktrees/
+.DS_Store
 **/.DS_Store
-**/.gradle/
-**/.project
-**/.settings/
-**/.stfolder/
-**/*.bun-build
-**/ModuleCache/
-**/node_modules/
-/local/
-/memory/
-# Agent credentials and memory (NEVER COMMIT)
-# Android build artifacts
-# Bun build artifacts
-# Deprecated changelog fragment workflow
-# Eclipse
-# fastlane (iOS)
-# fastlane build artifacts (local)
-# Generated bundled plugin runtime dependency manifests
-# Generated docs baseline artifacts (locally generated, only hashes tracked)
-# Generated protocol schema (produced via pnpm protocol:gen)
-# Local iOS signing overrides
-# Local scratch workspace
-# local tooling
-# Local untracked files
+ui/src/ui/__screenshots__/
+ui/playwright-report/
+ui/test-results/
+packages/dashboard-next/.next/
+packages/dashboard-next/out/
+
 # Mise configuration files
-# provisioning profiles (local)
-# Synthing
-# Vendor build artifacts
-# Xcode build directories (xcodebuild output)
-analysis/
-apps/android/.cxx/
+mise.toml
+
+# Android build artifacts
 apps/android/.gradle/
-apps/android/.kotlin/
 apps/android/app/build/
+apps/android/.cxx/
+apps/android/.kotlin/
 apps/android/benchmark/results/
-apps/ios/.derivedData/
-apps/ios/.local-signing.xcconfig
-apps/ios/.swiftpm/
-apps/ios/*.dSYM.zip
-apps/ios/*.ipa
-apps/ios/*.mobileprovision
-apps/ios/*.xcfilelist
-apps/ios/*.xcodeproj/
-apps/ios/*.xcworkspace/
-apps/ios/build/
-apps/ios/Clawdbot.xcodeproj/
-apps/ios/Clawdbot.xcodeproj/**
-apps/ios/fastlane/.env
-apps/ios/fastlane/logs/
-apps/ios/fastlane/Preview.html
-apps/ios/fastlane/README.md
-apps/ios/fastlane/report.xml
-apps/ios/fastlane/screenshots/
-apps/ios/fastlane/test_output/
-apps/ios/LocalSigning.xcconfig
-apps/macos-mlx-tts/.build/
-apps/macos-mlx-tts/.build/**
-apps/macos/.build-local/
+
+# Bun build artifacts
+*.bun-build
 apps/macos/.build/
-apps/macos/.build/**
-apps/macos/.swiftpm/
+apps/macos-mlx-tts/.build/
 apps/shared/MoltbotKit/.build/
-apps/shared/MoltbotKit/.swiftpm/
 apps/shared/OpenClawKit/.build/
-apps/shared/OpenClawKit/.swiftpm/
-apps/shared/OpenClawKit/build/
 apps/shared/OpenClawKit/Package.resolved
+**/ModuleCache/
 bin/
 bin/clawdbot-mac
 bin/docs-list
-bun.lock
-bun.lockb
-changelog/fragments/
+apps/macos/.build-local/
+apps/macos/.swiftpm/
+apps/shared/MoltbotKit/.swiftpm/
+apps/shared/OpenClawKit/.swiftpm/
 Core/
-coverage
-dist
-dist-runtime/
-dist/protocol.schema.json
-docker-compose.extra.yml
-docker-compose.override.yml
-docs/.generated/*.json
-docs/.generated/*.jsonl
-docs/.local/
-docs/internal/
-docs/superpowers
-docs/superpowers/plans/2026-03-10-collapsed-side-nav.md
-docs/superpowers/specs/2026-03-10-collapsed-side-nav-design.md
-extensions/**/.openclaw-runtime-deps-stamp.json
-extensions/**/.openclaw-runtime-deps.json
-extensions/qa-lab/web/dist/
-IDENTITY.md
-mise.toml
-node_modules
-package-lock.json
-packages/dashboard-next/.next/
-packages/dashboard-next/out/
-pnpm-lock.yaml
-skills-lock.json
+apps/ios/*.xcodeproj/
+apps/ios/*.xcworkspace/
+apps/ios/.swiftpm/
+apps/ios/.derivedData/
+apps/ios/.local-signing.xcconfig
+vendor/
+apps/ios/Clawdbot.xcodeproj/
+apps/ios/Clawdbot.xcodeproj/**
+apps/macos/.build/**
+apps/macos-mlx-tts/.build/**
+**/*.bun-build
+apps/ios/*.xcfilelist
+
+# Vendor build artifacts
+vendor/a2ui/renderers/lit/dist/
 src/canvas-host/a2ui/*.bundle.js
 src/canvas-host/a2ui/*.map
-Swabble/build/
-test/config-form.analyze.telegram.test.ts
-test/fixtures/openclaw-vitest-unit-report.json
+.bundle.hash
+
+# fastlane (iOS)
+apps/ios/fastlane/README.md
+apps/ios/fastlane/report.xml
+apps/ios/fastlane/Preview.html
+apps/ios/fastlane/screenshots/
+apps/ios/fastlane/test_output/
+apps/ios/fastlane/logs/
+apps/ios/fastlane/.env
+
+# fastlane build artifacts (local)
+apps/ios/*.ipa
+apps/ios/*.dSYM.zip
+
+# provisioning profiles (local)
+apps/ios/*.mobileprovision
+
+# Local untracked files
+.local/
+docs/.local/
+docs/internal/
 tmp/
-ui/.vitest-attachments
-ui/playwright-report/
-ui/src/ui/__screenshots__
-ui/src/ui/__screenshots__/
-ui/src/ui/theme-variants.browser.test.ts
-ui/src/ui/views/__screenshots__
-ui/test-results/
+IDENTITY.md
 USER.md
-vendor/
-vendor/a2ui/renderers/lit/dist/
+.tgz
+.idea
+
+# local tooling
+.serena/
+
+# Agent credentials and memory (NEVER COMMIT)
+/memory/
+.agent/*.json
+!.agent/workflows/
+/local/
+package-lock.json
+.claude/
+.agent/
+skills-lock.json
+
+# Local iOS signing overrides
+apps/ios/LocalSigning.xcconfig
+
+# Xcode build directories (xcodebuild output)
+apps/ios/build/
+apps/shared/OpenClawKit/build/
+Swabble/build/
+
+# Generated protocol schema (produced via pnpm protocol:gen)
+dist/protocol.schema.json
+.ant-colony/
+
+# Eclipse
+**/.project
+**/.classpath
+**/.settings/
+**/.gradle/
+
+# Synthing
+**/.stfolder/
+.dev-state
+docs/superpowers
+.superpowers/
+.gitignore
+test/config-form.analyze.telegram.test.ts
+ui/src/ui/theme-variants.browser.test.ts
+ui/src/ui/__screenshots__
+ui/src/ui/views/__screenshots__
+ui/.vitest-attachments
+
+# Generated docs baseline artifacts (locally generated, only hashes tracked)
+docs/.generated/*.json
+docs/.generated/*.jsonl
+
+# Deprecated changelog fragment workflow
+changelog/fragments/
+
+# Local scratch workspace
+.tmp/
+.vmux*
+.artifacts/
+test/fixtures/openclaw-vitest-unit-report.json
+analysis/
+.artifacts/qa-e2e/
+extensions/qa-lab/web/dist/
+
+# Generated bundled plugin runtime dependency manifests
+extensions/**/.openclaw-runtime-deps.json
+extensions/**/.openclaw-runtime-deps-stamp.json

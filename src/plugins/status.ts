@@ -18,9 +18,16 @@ import {
   type PluginInspectShape,
 } from "./inspect-shape.js";
 import { loadOpenClawPlugins } from "./loader.js";
+import { loadPluginManifestRegistryForInstalledIndex } from "./manifest-registry-installed.js";
+import type { PluginManifestRecord } from "./manifest-registry.js";
 import type { PluginDiagnostic } from "./manifest-types.js";
+import {
+  loadPluginRegistrySnapshotWithMetadata,
+  type PluginRegistrySnapshotDiagnostic,
+  type PluginRegistrySnapshotSource,
+} from "./plugin-registry.js";
 import { resolveBundledProviderCompatPluginIds } from "./providers.js";
-import type { PluginRegistry } from "./registry.js";
+import { createEmptyPluginRegistry, type PluginRecord, type PluginRegistry } from "./registry.js";
 import { listImportedRuntimePluginIds } from "./runtime.js";
 import {
   buildPluginRuntimeLoadOptions,
@@ -31,6 +38,11 @@ import type { PluginHookName, PluginLogger } from "./types.js";
 
 export type PluginStatusReport = PluginRegistry & {
   workspaceDir?: string;
+};
+
+export type PluginRegistryStatusReport = PluginStatusReport & {
+  registrySource: PluginRegistrySnapshotSource;
+  registryDiagnostics: readonly PluginRegistrySnapshotDiagnostic[];
 };
 
 export type { PluginCapabilityKind, PluginInspectShape } from "./inspect-shape.js";
@@ -142,6 +154,77 @@ type PluginReportParams = {
   env?: NodeJS.ProcessEnv;
   logger?: PluginLogger;
 };
+
+function buildPluginRecordFromInstalledIndex(
+  plugin: import("./installed-plugin-index.js").InstalledPluginIndexRecord,
+  manifest?: PluginManifestRecord,
+): PluginRecord {
+  return {
+    id: plugin.pluginId,
+    name: plugin.pluginId,
+    ...(plugin.packageVersion ? { version: plugin.packageVersion } : {}),
+    format: "openclaw",
+    source: plugin.manifestPath,
+    rootDir: plugin.rootDir,
+    origin: plugin.origin,
+    enabled: plugin.enabled,
+    status: plugin.enabled ? "loaded" : "disabled",
+    toolNames: [],
+    hookNames: [],
+    channelIds: [...(manifest?.channels ?? [])],
+    cliBackendIds: [...(manifest?.cliBackends ?? []), ...(manifest?.setup?.cliBackends ?? [])],
+    providerIds: [...(manifest?.providers ?? [])],
+    speechProviderIds: [],
+    realtimeTranscriptionProviderIds: [],
+    realtimeVoiceProviderIds: [],
+    mediaUnderstandingProviderIds: [],
+    imageGenerationProviderIds: [],
+    videoGenerationProviderIds: [],
+    musicGenerationProviderIds: [],
+    webFetchProviderIds: [],
+    webSearchProviderIds: [],
+    memoryEmbeddingProviderIds: [],
+    agentHarnessIds: [],
+    gatewayMethods: [],
+    cliCommands: [],
+    services: [],
+    gatewayDiscoveryServiceIds: [],
+    commands: [...(manifest?.commandAliases?.map((alias) => alias.name) ?? [])],
+    httpRoutes: 0,
+    hookCount: 0,
+    configSchema: false,
+    contracts: {},
+  };
+}
+
+export function buildPluginRegistrySnapshotReport(
+  params?: PluginReportParams,
+): PluginRegistryStatusReport {
+  const config = params?.config ?? loadConfig();
+  const result = loadPluginRegistrySnapshotWithMetadata({
+    config,
+    env: params?.env,
+    workspaceDir: params?.workspaceDir,
+  });
+  const manifestRegistry = loadPluginManifestRegistryForInstalledIndex({
+    index: result.snapshot,
+    config,
+    env: params?.env,
+    workspaceDir: params?.workspaceDir,
+    includeDisabled: true,
+  });
+  const manifestByPluginId = new Map(manifestRegistry.plugins.map((plugin) => [plugin.id, plugin]));
+  return {
+    workspaceDir: params?.workspaceDir,
+    ...createEmptyPluginRegistry(),
+    plugins: result.snapshot.plugins.map((plugin) =>
+      buildPluginRecordFromInstalledIndex(plugin, manifestByPluginId.get(plugin.pluginId)),
+    ),
+    diagnostics: [...result.snapshot.diagnostics],
+    registrySource: result.source,
+    registryDiagnostics: result.diagnostics,
+  };
+}
 
 function buildPluginReport(
   params: PluginReportParams | undefined,
